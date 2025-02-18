@@ -1,8 +1,8 @@
-# Codebender AI Chatbot Template
+# Rouge AI Chatbot Template
 
 This project is a template code to create a simple AI chatbot.
 
-It's a chat interface that allows you to talk with the Last Codebender.
+It's a chat interface that allows you to talk with the Last Rouge.
 
 This project is built using Nextjs. It utilizes the OpenAI GPT4 for chat completion.
 
