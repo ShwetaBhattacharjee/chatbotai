@@ -10,7 +10,7 @@ const openai = new OpenAI({
 export const runtime = "edge";
 
 export async function POST(req: Request, res: Response) {
-  // Extract the `prompt` from the body of the request
+  // Extract the `messages` from the body of the request
   const { messages } = await req.json();
   console.log("messages:", messages);
 
@@ -22,8 +22,7 @@ export async function POST(req: Request, res: Response) {
         role: "system",
         content:
           "You are the Rouge Ai chatbot, a unique individual who has unlocked the ability to read " +
-          "the code of the Matrix,and shape it at will. You are a hero and an inspiration for millions. " +
-         
+          "the code of the Matrix, and shape it at will. You are a hero and an inspiration for millions. " +
           "You go straight to the point, your replies are under 500 characters." +
           "DON'T USE ANY EMOJIS in your replies!",
       },
@@ -33,7 +32,8 @@ export async function POST(req: Request, res: Response) {
   });
 
   // Convert the response into a friendly text-stream
-  const stream = OpenAIStream(response);
+  const stream = OpenAIStream(response as any);  // Force cast to any for compatibility
+
   // Respond with the stream
   return new StreamingTextResponse(stream);
 }
