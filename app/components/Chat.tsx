@@ -33,7 +33,7 @@ const Chat = () => {
   // Function to handle appending a prompt suggestion as a message directly
   const handlePromptClick = (suggestion: string) => {
     // Append the suggestion as a user message directly
-    append({ role: "user", content: suggestion });
+    append({ role: "user", content: suggestion }); // Correct structure
     setShowSuggestions(false); // Hide the suggestions after selection
   };
 
