@@ -7,9 +7,9 @@ export default function Home() {
   return (
     <main className="flex flex-col h-screen bg-[#040d17] text-white">
       <nav className="flex justify-between items-center p-4">
-        <Image src="/logo.png" alt="Rouge Logo" width={150} height={40} />
+        <Image src="/logo.png" alt="Rouge Logo" width={50} height={30} />
         <h1 className="text-xl font-semibold">
-          Talk to <span className="highlighted-text">The Last Rouge</span>
+          Talk to <span className="highlighted-text">Rouge Chatbot</span>
         </h1>
       </nav>
       <div className="flex-grow overflow-hidden">
