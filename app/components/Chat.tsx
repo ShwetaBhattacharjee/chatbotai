@@ -129,3 +129,31 @@ const Chat = () => {
 };
 
 export default Chat;
+interface PromptSuggestionsProps {
+  label: string;
+  onSuggestionClick: (suggestion: string) => void; // Updated prop type
+  suggestions: string[];
+}
+
+export function PromptSuggestions({
+  label,
+  onSuggestionClick,
+  suggestions,
+}: PromptSuggestionsProps) {
+  return (
+    <div className="space-y-6">
+      <h2 className="text-center text-2xl font-bold">{label}</h2>
+      <div className="flex gap-6 text-sm">
+        {suggestions.map((suggestion) => (
+          <button
+            key={suggestion}
+            onClick={() => onSuggestionClick(suggestion)} // Pass the suggestion string
+            className="h-max flex-1 rounded-xl border bg-background p-4 hover:bg-muted"
+          >
+            <p>{suggestion}</p>
+          </button>
+        ))}
+      </div>
+    </div>
+  );
+}
