@@ -1,23 +1,20 @@
 "use client";
 
 import { useState } from "react";
+import { MessageCircle } from "lucide-react";
 
 export default function ChatbotWidget() {
   const [isOpen, setIsOpen] = useState(false);
-
-  const handleToggleChatbot = () => {
-    setIsOpen(!isOpen);
-  };
 
   return (
     <>
       {/* Floating Chatbot Toggle Button */}
       <button
-        onClick={handleToggleChatbot}
+        onClick={() => setIsOpen(!isOpen)}
         className="fixed bottom-6 right-6 bg-[#1F2937] hover:bg-[#111827] text-white p-3 rounded-full shadow-xl z-50"
         aria-label="Toggle Chatbot"
       >
-        <span className="text-xl">💬</span> {/* Using emoji for chat icon */}
+        <MessageCircle size={24} />
       </button>
 
       {/* Chatbot Modal */}
@@ -35,7 +32,6 @@ export default function ChatbotWidget() {
               width: "100%",
               backgroundColor: "black",
               colorScheme: "dark",
-              border: "none",
             }}
             allow="clipboard-write"
           />
