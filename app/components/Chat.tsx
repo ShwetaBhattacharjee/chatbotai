@@ -8,116 +8,90 @@ const Chat = () => {
   });
 
   const chatContainer = useRef<HTMLDivElement>(null);
-  const [showSuggestions, setShowSuggestions] = useState(true); // State to control visibility of suggestions
+  const [showSuggestions, setShowSuggestions] = useState(true);
 
-  // List of prompt suggestions to show to the user
   const suggestions = [
     "Generate a list of five companies.",
     "Generate a list of five popular startups.",
     "Generate a list of five well-known tech companies.",
   ];
 
-  const scroll = () => {
+  const handlePromptClick = (suggestion: string) => {
+    append({ role: "user", content: suggestion });
+    setShowSuggestions(false);
+  };
+
+  useEffect(() => {
     if (chatContainer.current) {
       const { offsetHeight, scrollHeight, scrollTop } = chatContainer.current;
       if (scrollHeight >= scrollTop + offsetHeight) {
         chatContainer.current.scrollTo(0, scrollHeight + 200);
       }
     }
-  };
-
-  useEffect(() => {
-    scroll();
   }, [messages]);
 
-  // Function to handle appending a prompt suggestion as a message directly
-  const handlePromptClick = (suggestion: string) => {
-    // Append the suggestion as a user message directly
-    append({ role: "user", content: suggestion }); // Correct structure
-    setShowSuggestions(false); // Hide the suggestions after selection
-  };
-
-  const renderResponse = () => {
-    return (
-      <div className="response">
+  return (
+    <div className="h-full w-full flex flex-col p-4 overflow-y-auto space-y-4">
+      <div ref={chatContainer} className="flex-1 space-y-3 overflow-y-auto">
         {messages.map((m, index) => (
           <div
             key={m.id}
-            className={`chat-line ${
-              m.role === "user" ? "user-chat" : "ai-chat"
+            className={`flex items-start gap-4 ${
+              m.role === "user" ? "justify-end" : "justify-start"
             }`}
           >
             <Image
-              className="avatar"
+              className="rounded-full"
               alt="avatar"
-              width={40}
-              height={40}
+              width={32}
+              height={32}
               src={m.role === "user" ? "/user-avatar.jpg" : "/ai-avatar.png"}
             />
-            <div style={{ width: "100%", marginLeft: "16px" }}>
-              <p className="message">{m.content}</p>
-              {index < messages.length - 1 && (
-                <div className="horizontal-line" />
-              )}
+            <div className="bg-gray-100 p-3 rounded-xl max-w-[75%] text-sm">
+              {m.content}
             </div>
           </div>
         ))}
       </div>
-    );
-  };
 
-  return (
-    <div ref={chatContainer} className="chat">
-      {renderResponse()}
-      {/* Render prompt suggestions if available and not already selected */}
       {showSuggestions && (
-        <PromptSuggestions
-          label="Try these prompts ✨"
-          onSuggestionClick={handlePromptClick} // Pass the click handler
-          suggestions={suggestions}
-        />
+        <div className="space-y-4">
+          <h2 className="text-lg font-semibold text-center">Try these prompts ✨</h2>
+          <div className="flex flex-wrap gap-2">
+            {suggestions.map((suggestion) => (
+              <button
+                key={suggestion}
+                onClick={() => handlePromptClick(suggestion)}
+                className="bg-white border px-3 py-2 rounded-xl hover:bg-gray-100 text-sm"
+              >
+                {suggestion}
+              </button>
+            ))}
+          </div>
+        </div>
       )}
-      <form onSubmit={handleSubmit} className="chat-form">
+
+      <form
+        onSubmit={handleSubmit}
+        className="flex gap-2 items-center border-t pt-2"
+      >
         <input
           name="input-field"
           type="text"
-          placeholder="Say anything"
+          placeholder="Say anything..."
           onChange={handleInputChange}
           value={input}
+          className="flex-1 border rounded-xl p-2 text-sm"
         />
-        <button type="submit" className="send-button" />
+        <button
+          type="submit"
+          className="bg-black text-white px-4 py-2 rounded-xl text-sm"
+        >
+          Send
+        </button>
       </form>
     </div>
   );
 };
 
 export default Chat;
-
-interface PromptSuggestionsProps {
-  label: string;
-  onSuggestionClick: (suggestion: string) => void; // Updated prop type
-  suggestions: string[];
-}
-
-export function PromptSuggestions({
-  label,
-  onSuggestionClick,
-  suggestions,
-}: PromptSuggestionsProps) {
-  return (
-    <div className="space-y-6">
-      <h2 className="text-center text-2xl font-bold">{label}</h2>
-      <div className="flex gap-6 text-sm">
-        {suggestions.map((suggestion) => (
-          <button
-            key={suggestion}
-            onClick={() => onSuggestionClick(suggestion)} // Pass the suggestion string
-            className="h-max flex-1 rounded-xl border bg-background p-4 hover:bg-muted"
-          >
-            <p>{suggestion}</p>
-          </button>
-        ))}
-      </div>
-    </div>
-  );
-}
