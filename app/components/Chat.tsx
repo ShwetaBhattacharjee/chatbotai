@@ -55,7 +55,13 @@ const Chat = () => {
                 src="/ai-avatar.png"
               />
             )}
-            <div className="mx-2 max-w-[80%] bg-gray-100 text-black p-3 rounded-xl">
+            <div
+              className={`mx-2 max-w-[80%] p-3 rounded-xl ${
+                m.role === "user"
+                  ? "bg-gray-800 text-white"
+                  : "bg-gray-700 text-white"
+              }`}
+            >
               <p className="text-sm">{m.content}</p>
             </div>
             {m.role === "user" && (
@@ -76,19 +82,21 @@ const Chat = () => {
   return (
     <div
       ref={chatContainer}
-      className="max-w-2xl mx-auto p-4 border rounded-lg shadow-md bg-white h-[90vh] overflow-y-auto flex flex-col"
+      className="max-w-2xl mx-auto p-4 border border-gray-700 rounded-lg shadow-md bg-black h-[90vh] overflow-y-auto flex flex-col text-white"
     >
       {renderResponse()}
 
       {showSuggestions && (
         <div className="mb-4">
-          <h2 className="text-center text-lg font-semibold mb-2">Try these prompts ✨</h2>
+          <h2 className="text-center text-lg font-semibold mb-2">
+            Try these prompts ✨
+          </h2>
           <div className="flex flex-wrap gap-4 justify-between">
             {suggestions.map((suggestion) => (
               <button
                 key={suggestion}
                 onClick={() => handlePromptClick(suggestion)}
-                className="flex-1 min-w-[100px] text-sm rounded-xl border bg-white text-black p-3 hover:bg-gray-100 transition"
+                className="flex-1 min-w-[100px] text-sm rounded-xl border border-gray-600 bg-gray-800 text-white p-3 hover:bg-gray-700 transition"
               >
                 {suggestion}
               </button>
@@ -97,18 +105,21 @@ const Chat = () => {
         </div>
       )}
 
-      <form onSubmit={handleSubmit} className="mt-auto flex items-center gap-2 border-t pt-4">
+      <form
+        onSubmit={handleSubmit}
+        className="mt-auto flex items-center gap-2 border-t border-gray-700 pt-4"
+      >
         <input
           name="input-field"
           type="text"
           placeholder="Say anything"
           onChange={handleInputChange}
           value={input}
-          className="flex-1 px-4 py-2 border rounded-lg text-sm focus:outline-none"
+          className="flex-1 px-4 py-2 bg-gray-900 border border-gray-700 rounded-lg text-sm text-white placeholder-gray-400 focus:outline-none"
         />
         <button
           type="submit"
-          className="px-4 py-2 bg-black text-white rounded-lg hover:bg-gray-800"
+          className="px-4 py-2 bg-white text-black rounded-lg hover:bg-gray-300 transition"
         >
           Send
         </button>
