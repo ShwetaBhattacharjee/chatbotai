@@ -1,11 +1,9 @@
 "use client";
 
 import { useState } from "react";
-import { MessageCircle } from "lucide-react";
 
 export default function ChatbotWidget() {
   const [isOpen, setIsOpen] = useState(false);
-  const [showSuggestions, setShowSuggestions] = useState(true); // Hide suggestions after typing
 
   const handleToggleChatbot = () => {
     setIsOpen(!isOpen);
@@ -19,7 +17,7 @@ export default function ChatbotWidget() {
         className="fixed bottom-6 right-6 bg-[#1F2937] hover:bg-[#111827] text-white p-3 rounded-full shadow-xl z-50"
         aria-label="Toggle Chatbot"
       >
-        <MessageCircle size={24} />
+        <span className="text-xl">💬</span> {/* Using emoji for chat icon */}
       </button>
 
       {/* Chatbot Modal */}
