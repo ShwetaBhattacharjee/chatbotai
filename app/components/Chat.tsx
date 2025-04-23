@@ -1,17 +1,15 @@
 "use client";
 
-import { useState, useRef, useEffect } from "react";
-import { MessageCircle } from "lucide-react";
-import Image from "next/image";
 import { useChat } from "ai/react";
+import { useEffect, useRef, useState } from "react";
+import Image from "next/image";
 
-export default function ChatbotWidget() {
-  const [isOpen, setIsOpen] = useState(false);
-  const chatContainer = useRef<HTMLDivElement>(null);
+const Chat = () => {
   const { messages, input, handleInputChange, handleSubmit, append } = useChat({
     api: "/api/openai",
   });
 
+  const chatContainer = useRef<HTMLDivElement>(null);
   const [showSuggestions, setShowSuggestions] = useState(true);
 
   const suggestions = [
@@ -38,35 +36,35 @@ export default function ChatbotWidget() {
     setShowSuggestions(false);
   };
 
-  const renderMessages = () => {
+  const renderResponse = () => {
     return (
-      <div className="space-y-4">
+      <div className="space-y-4 mb-4">
         {messages.map((m, index) => (
           <div
             key={m.id}
-            className={`flex items-start space-x-3 ${
+            className={`flex items-start ${
               m.role === "user" ? "justify-end" : "justify-start"
             }`}
           >
             {m.role === "user" ? null : (
               <Image
-                src="/ai-avatar.png"
-                alt="AI Avatar"
-                width={32}
-                height={32}
                 className="rounded-full"
+                alt="AI Avatar"
+                width={40}
+                height={40}
+                src="/ai-avatar.png"
               />
             )}
-            <div className="bg-gray-100 text-black p-3 rounded-lg max-w-[80%]">
-              <p>{m.content}</p>
+            <div className="mx-2 max-w-[80%] bg-gray-100 text-black p-3 rounded-xl">
+              <p className="text-sm">{m.content}</p>
             </div>
             {m.role === "user" && (
               <Image
-                src="/user-avatar.jpg"
-                alt="User Avatar"
-                width={32}
-                height={32}
                 className="rounded-full"
+                alt="User Avatar"
+                width={40}
+                height={40}
+                src="/user-avatar.jpg"
               />
             )}
           </div>
@@ -76,61 +74,47 @@ export default function ChatbotWidget() {
   };
 
   return (
-    <>
-      {/* Floating Chatbot Toggle Button */}
-      <button
-        onClick={() => setIsOpen(!isOpen)}
-        className="fixed bottom-6 right-6 bg-[#1F2937] hover:bg-[#111827] text-white p-3 rounded-full shadow-xl z-50"
-        aria-label="Toggle Chatbot"
-      >
-        <MessageCircle size={24} />
-      </button>
+    <div
+      ref={chatContainer}
+      className="max-w-2xl mx-auto p-4 border rounded-lg shadow-md bg-white h-[90vh] overflow-y-auto flex flex-col"
+    >
+      {renderResponse()}
 
-      {/* Chatbot Modal */}
-      {isOpen && (
-        <div className="fixed bottom-24 right-6 z-50 w-[360px] h-[500px] bg-white rounded-2xl shadow-2xl overflow-hidden border border-gray-300 flex flex-col">
-          {/* Chat content */}
-          <div className="flex-1 p-4 overflow-y-auto" ref={chatContainer}>
-            {renderMessages()}
-            {showSuggestions && (
-              <div className="mt-4">
-                <h2 className="text-center text-md font-semibold mb-2">Try these prompts ✨</h2>
-                <div className="grid grid-cols-3 gap-2">
-                  {suggestions.map((suggestion) => (
-                    <button
-                      key={suggestion}
-                      onClick={() => handlePromptClick(suggestion)}
-                      className="bg-white text-black border border-gray-300 px-2 py-1 rounded-xl text-xs hover:bg-gray-100 transition"
-                    >
-                      {suggestion}
-                    </button>
-                  ))}
-                </div>
-              </div>
-            )}
+      {showSuggestions && (
+        <div className="mb-4">
+          <h2 className="text-center text-lg font-semibold mb-2">Try these prompts ✨</h2>
+          <div className="flex flex-wrap gap-4 justify-between">
+            {suggestions.map((suggestion) => (
+              <button
+                key={suggestion}
+                onClick={() => handlePromptClick(suggestion)}
+                className="flex-1 min-w-[100px] text-sm rounded-xl border bg-white text-black p-3 hover:bg-gray-100 transition"
+              >
+                {suggestion}
+              </button>
+            ))}
           </div>
-
-          {/* Input form */}
-          <form
-            onSubmit={handleSubmit}
-            className="p-2 border-t border-gray-200 flex items-center gap-2"
-          >
-            <input
-              type="text"
-              value={input}
-              onChange={handleInputChange}
-              placeholder="Type something..."
-              className="flex-1 px-3 py-2 rounded-lg border border-gray-300 text-sm outline-none"
-            />
-            <button
-              type="submit"
-              className="bg-[#1F2937] text-white px-4 py-2 rounded-lg hover:bg-[#111827] text-sm"
-            >
-              Send
-            </button>
-          </form>
         </div>
       )}
-    </>
+
+      <form onSubmit={handleSubmit} className="mt-auto flex items-center gap-2 border-t pt-4">
+        <input
+          name="input-field"
+          type="text"
+          placeholder="Say anything"
+          onChange={handleInputChange}
+          value={input}
+          className="flex-1 px-4 py-2 border rounded-lg text-sm focus:outline-none"
+        />
+        <button
+          type="submit"
+          className="px-4 py-2 bg-black text-white rounded-lg hover:bg-gray-800"
+        >
+          Send
+        </button>
+      </form>
+    </div>
   );
-}
+};
+
+export default Chat;
