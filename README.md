@@ -6,7 +6,6 @@ It's a chat interface that allows you to talk with the Last Rouge.
 
 This project is built using Nextjs. It utilizes the OpenAI GPT4 for chat completion.
 
-<img src="app-screenshot.png" alt="app demo" width=600>
 
 ## Getting Started
 
