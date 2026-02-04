@@ -33,7 +33,8 @@ export async function POST(req: Request) {
     });
 
     // Convert the response into a friendly text-stream
-    const stream = OpenAIStream(response);
+    // Type assertion needed for compatibility between openai and ai packages
+    const stream = OpenAIStream(response as any);
 
     // Respond with the stream
     return new StreamingTextResponse(stream);
