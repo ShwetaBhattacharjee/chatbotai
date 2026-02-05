@@ -27,8 +27,9 @@ export async function POST(req: Request) {
 
     console.log("Calling Gemini API...");
 
+    // Use the correct model name for v1beta
     const response = await fetch(
-      `https://generativelanguage.googleapis.com/v1beta/models/gemini-1.5-flash:streamGenerateContent?key=${process.env.GOOGLE_API_KEY}`,
+      `https://generativelanguage.googleapis.com/v1beta/models/gemini-1.5-flash-latest:streamGenerateContent?key=${process.env.GOOGLE_API_KEY}`,
       {
         method: "POST",
         headers: {
@@ -104,7 +105,6 @@ export async function POST(req: Request) {
                   controller.enqueue(encoder.encode(text));
                 }
               } catch (e) {
-                console.error("JSON parse error:", e);
                 // Continue processing other lines
               }
             }
@@ -120,7 +120,7 @@ export async function POST(req: Request) {
                 controller.enqueue(encoder.encode(text));
               }
             } catch (e) {
-              console.error("Final buffer parse error:", e);
+              // Silent fail
             }
           }
         } catch (error) {
