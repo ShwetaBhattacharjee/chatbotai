@@ -27,9 +27,9 @@ export async function POST(req: Request) {
 
     console.log("Calling Gemini API...");
 
-    // Use the correct model name for v1beta
+    // Use v1 API endpoint with correct model name
     const response = await fetch(
-      `https://generativelanguage.googleapis.com/v1beta/models/gemini-1.5-flash-latest:streamGenerateContent?key=${process.env.GOOGLE_API_KEY}`,
+      `https://generativelanguage.googleapis.com/v1/models/gemini-1.5-flash:streamGenerateContent?alt=sse&key=${process.env.GOOGLE_API_KEY}`,
       {
         method: "POST",
         headers: {
@@ -68,7 +68,7 @@ export async function POST(req: Request) {
 
     console.log("Gemini response received, streaming...");
 
-    // Transform Gemini's stream to plain text stream
+    // Transform Gemini's SSE stream to plain text stream
     const encoder = new TextEncoder();
     const decoder = new TextDecoder();
 
@@ -92,29 +92,28 @@ export async function POST(req: Request) {
             buffer = lines.pop() || '';
 
             for (const line of lines) {
-              const trimmed = line.trim();
-              if (!trimmed || trimmed === '[' || trimmed === ']' || trimmed === ',') continue;
-              
-              try {
-                // Remove trailing comma if present
-                const jsonStr = trimmed.endsWith(',') ? trimmed.slice(0, -1) : trimmed;
-                const json = JSON.parse(jsonStr);
+              // SSE format: "data: {json}"
+              if (line.startsWith('data: ')) {
+                const data = line.slice(6);
                 
-                const text = json.candidates?.[0]?.content?.parts?.[0]?.text;
-                if (text) {
-                  controller.enqueue(encoder.encode(text));
+                try {
+                  const json = JSON.parse(data);
+                  const text = json.candidates?.[0]?.content?.parts?.[0]?.text;
+                  if (text) {
+                    controller.enqueue(encoder.encode(text));
+                  }
+                } catch (e) {
+                  // Continue processing other lines
                 }
-              } catch (e) {
-                // Continue processing other lines
               }
             }
           }
           
           // Process any remaining buffer
-          if (buffer.trim()) {
+          if (buffer.trim() && buffer.startsWith('data: ')) {
             try {
-              const jsonStr = buffer.trim().endsWith(',') ? buffer.trim().slice(0, -1) : buffer.trim();
-              const json = JSON.parse(jsonStr);
+              const data = buffer.slice(6);
+              const json = JSON.parse(data);
               const text = json.candidates?.[0]?.content?.parts?.[0]?.text;
               if (text) {
                 controller.enqueue(encoder.encode(text));
